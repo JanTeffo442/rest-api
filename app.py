@@ -46,7 +46,6 @@ def get_post():
 	return jsonify({'Hello':'World'})
 
 
-
 @app.route('/add_computer', methods = ['POST'])
 def add_computer():
 	hard_drive_type = request.json['hard_drive_type']
@@ -63,6 +62,12 @@ def add_computer():
 	return computers_schema.jsonify(computer)
 
 
+@app.route('/get_all', methods = ['GET'])
+def all_computers():
+	all_pcs = Computers.query.all()
+	result = computers_schema.dump(all_pcs)
+
+	return jsonify(result)
 
 
 if __name__ == "__main__":
