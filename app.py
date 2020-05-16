@@ -70,5 +70,12 @@ def all_computers():
 	return jsonify(result)
 
 
+@app.route('/get_by_id/<id>/', methods = ['GET'])
+def get_by_id(id):
+	single_computer = Computers.query.get(id)
+
+	return computers_schema.jsonify(single_computer)
+
+
 if __name__ == "__main__":
 	app.run(debug=True)
