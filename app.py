@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request,jsonify
 from flask_sqlalchemy import SQLAlchemy 
 from flask_marshmallow import Marshmallow 
 
@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/umuzi_inventory'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
+
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -28,8 +29,7 @@ class Computers(db.Model):
 		self.maximum_ram = maximum_ram
 		self.hard_drive_space = hard_drive_space
 		self.form_factor = form_factor
-
-#db.create_all()
+#db.create_all() 
 
 
 class ComputerSchema(ma.Schema):
@@ -40,13 +40,24 @@ computer_schema = ComputerSchema()
 computers_schema = ComputerSchema(many = True)
 
 
+@app.route('/get_all', methods = ['GET'])
+def all_computers():
 
-@app.route('/get', methods = ['GET'])
-def get_post():
-	return jsonify({'Hello':'World'})
+	all_pcs = Computers.query.all()
+	result = computers_schema.dump(all_pcs)
+	return jsonify(result)
+
+
+@app.route('/get_by_id/<id>/', methods = ['GET'])
+def get_by_id(id):
+
+	single_computer = Computers.query.get(id)
+	return computer_schema.jsonify(single_computer)
+
 
 @app.route('/add_computer', methods = ['POST'])
 def add_computer():
+
 	hard_drive_type = request.json['hard_drive_type']
 	processor = request.json['processor']
 	amount_of_ram = request.json['amount_of_ram']
@@ -54,22 +65,12 @@ def add_computer():
 	hard_drive_space = request.json['hard_drive_space']
 	form_factor = request.json['form_factor']
 
-	computer = Computers(hard_drive_type, processor, amount_of_ram, maximum_ram, hard_drive_space, form_factor)
-	db.session.add(computer)
+	add_pc = Computers(hard_drive_type, processor, amount_of_ram, maximum_ram, hard_drive_space, form_factor)
+	db.session.add(add_pc)
 	db.session.commit()
 
-@app.route('/get_all', methods = ['GET'])
-def all_computers():
-	all_pcs = Computers.query.all()
-	result = computers_schema.dump(all_pcs)
+	return computer_schema.jsonify(add_pc)
 
-	return jsonify(result)
-
-@app.route('/get_by_id/<id>/', methods = ['GET'])
-def get_by_id(id):
-	single_computer = Computers.query.get(id)
-
-	return computer_schema.jsonify(single_computer)
 
 @app.route('/edit_pc/<id>/', methods = ['PUT'])
 def edit_computer(id):
@@ -83,7 +84,6 @@ def edit_computer(id):
 	hard_drive_space = request.json['hard_drive_space']
 	form_factor = request.json['form_factor']
 
-
 	edit.hard_drive_type = hard_drive_type
 	edit.processor = processor
 	edit.amount_of_ram = amount_of_ram
@@ -92,8 +92,17 @@ def edit_computer(id):
 	edit.form_factor = form_factor
 
 	db.session.commit()
+
 	return computer_schema.jsonify(edit)
 
+@app.route('/delete_pc/<id>/', methods = ['DELETE'])
+def delete_computer(id):
+	delete_pc = Computers.query.get(id)
+	
+	db.session.delete(delete_pc)
+	db.session.commit()
+
+	return computer_schema.jsonify(delete_pc)
 
 
 if __name__ == "__main__":
