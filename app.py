@@ -71,27 +71,29 @@ def get_by_id(id):
 
 	return computer_schema.jsonify(single_computer)
 
-'''@app.route('/update_computer/<id>', methods = ['PUT'])
-def update_computer(id):
+@app.route('/edit_pc/<id>/', methods = ['PUT'])
+def edit_computer(id):
 
-	run_update = Computers.query.get(id)
+	edit = Computers.query.get(id)
+
 	hard_drive_type = request.json['hard_drive_type']
 	processor = request.json['processor']
-	amount_of_ram = request,json['amount_of_ram']
+	amount_of_ram = request.json['amount_of_ram']
 	maximum_ram = request.json['maximum_ram']
 	hard_drive_space = request.json['hard_drive_space']
 	form_factor = request.json['form_factor']
 
 
-	run_update.hard_drive_type = hard_drive_type
-	run_update.processor = processor
-	run_update.amount_of_ram = amount_of_ram
-	run_update.maximum_ram = maximum_ram
-	run_update.hard_drive_space = hard_drive_space
-	run_update.form_factor = form_factor
+	edit.hard_drive_type = hard_drive_type
+	edit.processor = processor
+	edit.amount_of_ram = amount_of_ram
+	edit.maximum_ram = maximum_ram
+	edit.hard_drive_space = hard_drive_space
+	edit.form_factor = form_factor
 
 	db.session.commit()
-	return compu'''
+	return computer_schema.jsonify(edit)
+
 
 
 if __name__ == "__main__":
