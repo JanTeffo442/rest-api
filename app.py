@@ -45,7 +45,6 @@ computers_schema = ComputerSchema(many = True)
 def get_post():
 	return jsonify({'Hello':'World'})
 
-
 @app.route('/add_computer', methods = ['POST'])
 def add_computer():
 	hard_drive_type = request.json['hard_drive_type']
@@ -59,9 +58,6 @@ def add_computer():
 	db.session.add(computer)
 	db.session.commit()
 
-	return computers_schema.jsonify(computer)
-
-
 @app.route('/get_all', methods = ['GET'])
 def all_computers():
 	all_pcs = Computers.query.all()
@@ -69,12 +65,33 @@ def all_computers():
 
 	return jsonify(result)
 
-
 @app.route('/get_by_id/<id>/', methods = ['GET'])
 def get_by_id(id):
 	single_computer = Computers.query.get(id)
 
-	return computers_schema.jsonify(single_computer)
+	return computer_schema.jsonify(single_computer)
+
+'''@app.route('/update_computer/<id>', methods = ['PUT'])
+def update_computer(id):
+
+	run_update = Computers.query.get(id)
+	hard_drive_type = request.json['hard_drive_type']
+	processor = request.json['processor']
+	amount_of_ram = request,json['amount_of_ram']
+	maximum_ram = request.json['maximum_ram']
+	hard_drive_space = request.json['hard_drive_space']
+	form_factor = request.json['form_factor']
+
+
+	run_update.hard_drive_type = hard_drive_type
+	run_update.processor = processor
+	run_update.amount_of_ram = amount_of_ram
+	run_update.maximum_ram = maximum_ram
+	run_update.hard_drive_space = hard_drive_space
+	run_update.form_factor = form_factor
+
+	db.session.commit()
+	return compu'''
 
 
 if __name__ == "__main__":
